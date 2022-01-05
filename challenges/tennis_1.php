@@ -9,36 +9,69 @@ $engine = 'TENNIS_1';
 $game = new Game($key, $engine);
 $data = $game->input();
 
-echo '<pre>';
-print_r($data);
-echo '</pre>';
+// echo '<pre>';
+// print_r($data);
+// echo '</pre>';
+
+// exit;
 
 // ------------------ CODE DU CHALLENGE ------------------
 // $data = array();
-// $data['time']=262;
-// $data['actions']="BBBBBBBBBBBBBIIIIIIIIIIMMMMMMMMMEEEEEEEE";
-// $data['references']="B:7 I:4 M:3 E:8";
+// $data['points']="NNDDDNDDDNDNDNNNDNDNNNNDNNN";
 
-$time = $data['time'];
-$actions = $data['actions'];
-$references = initializeReferences($data['references']);
+$points = $data['points'];
 
-$result = 0;
+$nbPoints = strlen($points);
 
-$max = strlen($actions);
+$pJN = 0;
+$pJD = 0;
+$jJN = 0;
+$jJD = 0;
+$sJN = 0;
+$sJD = 0;
+$score = ["0", "15", "30","40"];
 
-for($i=0;$i<$max;$i++){
-//    printf("%s %d %d\n",$actions[$i],$references[$actions[$i]],$result);
-    $result+=$references[$actions[$i]];
+// printf("%d:%d:%d:%d:%d:%d\n", $pJN, $pJD, $jJN, $jJD, $sJN, $sJD);
 
+for($i=0;$i<$nbPoints;$i++){
+
+    if ($points[$i] == 'D') {
+        $pJD++;
+        if ($pJD == 4) {
+            $pJD = 0;
+            $pJN = 0;
+            $jJD++;
+            if ($jJD == 6) {
+                $jJD = 0;
+                $jJN = 0;
+                $sJD++;
+            }
+        }
+    }
+
+    if ($points[$i] == 'N') {
+        $pJN++;
+        if ($pJN == 4) {
+            $pJD = 0;
+            $pJN = 0;
+            $jJN++;
+            if ($jJN == 6) {
+                $jJD = 0;
+                $jJN = 0;
+                $sJN++;
+            }
+        }
+    }
+
+    printf("%s %d:%d:%d:%d:%d:%d\n",$points[$i], $pJD, $pJN, $jJD, $jJN, $sJD, $sJN);
 }
 
-$response = (($result > $time) ? "PRISON" : "ESCAPE").abs($result - $time);
+$response = $jJD.":".$jJN.":".$score[$pJD].":".$score[$pJN];
 
-printf("%d %s", $result, $response);
+printf("%s", $response);
 
 // DÃ©commente pour repondre au challenge
-// $game->output(['data' => $response]);
+$game->output(['data' => $response]);
 
 
 
